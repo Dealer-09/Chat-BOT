@@ -1,0 +1,113 @@
+/* Default Light Mode */
+:root {
+  --bg-color: #f4f4f4;
+  --text-color: black;
+  --chat-bg: white;
+  --user-msg-bg: #0084ff;
+  --assistant-msg-bg: #e1e1e1;
+  --btn-bg: #0084ff;
+  --btn-text: white;
+  --input-border: #ccc;
+}
+
+/* Dark Mode */
+.dark-mode {
+  --bg-color: #181818;
+  --text-color: white;
+  --chat-bg: #222;
+  --user-msg-bg: #0066cc;
+  --assistant-msg-bg: #333;
+  --btn-bg: #0066cc;
+  --btn-text: white;
+  --input-border: #555;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: var(--bg-color);
+  color: var(--text-color);
+  transition: background 0.3s, color 0.3s;
+}
+
+#chat-container {
+  width: 90%;
+  max-width: 400px;
+  height: 400px;
+  overflow-y: auto;
+  padding: 10px;
+  background: var(--chat-bg);
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.message {
+  padding: 8px;
+  margin: 5px;
+  border-radius: 5px;
+  max-width: 75%;
+}
+
+.user-message {
+  background: var(--user-msg-bg);
+  color: white;
+  text-align: right;
+  align-self: flex-end;
+}
+
+.assistant-message {
+  background: var(--assistant-msg-bg);
+  color: var(--text-color);
+  align-self: flex-start;
+}
+
+#suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  justify-content: center;
+  margin: 10px 0;
+}
+
+.suggestion-btn {
+  padding: 5px 10px;
+  border: none;
+  background: #ddd;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#input-container {
+  display: flex;
+  width: 90%;
+  max-width: 400px;
+  margin-top: 10px;
+}
+
+#message-input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid var(--input-border);
+  border-radius: 5px;
+  background: var(--chat-bg);
+  color: var(--text-color);
+}
+
+#btn {
+  padding: 8px 12px;
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border: none;
+  cursor: pointer;
+  margin-left: 5px;
+  border-radius: 5px;
+}
+
+.typing-indicator {
+  font-style: italic;
+  color: gray;
+}
