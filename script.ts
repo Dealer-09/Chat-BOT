@@ -1,21 +1,44 @@
-// Select elements
+const chatBubble = document.querySelector<HTMLDivElement>("#chat-bubble")!;
+const chatWrapper = document.querySelector<HTMLDivElement>("#chat-wrapper")!;
 const btn = document.querySelector<HTMLButtonElement>("#btn")!;
 const content = document.querySelector<HTMLDivElement>("#chat-container")!;
 const messageInput = document.querySelector<HTMLInputElement>("#message-input")!;
 const suggestionsContainer = document.querySelector<HTMLDivElement>("#suggestions")!;
 
+// Toggle Chat Window (Show/Hide Chat)
+chatBubble.addEventListener("click", () => {
+    chatWrapper.style.display = chatWrapper.style.display === "none" ? "flex" : "none";
+});
+
+// Class Timings for Each Weekday
+const classSchedule: { [key: string]: string } = {
+    "monday": "Classes run from 9:00 AM to 5:00 PM.",
+    "tuesday": "Classes run from 9:00 AM to 5:00 PM.",
+    "wednesday": "Classes run from 9:00 AM to 5:00 PM.",
+    "thursday": "Classes run from 9:00 AM to 5:00 PM.",
+    "friday": "Classes run from 9:00 AM to 5:00 PM.",
+    "saturday": "Weekend classes from 10:00 AM to 2:00 PM.",
+    "sunday": "No classes! Enjoy your day off."
+};
+
+// Contact Information
+const contactInfo = "📧 Email: aimsclasses07@gmail.com\n📞 Phone: 8777811841";
+
 // Predefined responses
 const responses: { [key: string]: string | (() => void) } = {
     "hello": "Hello student, what can I help you with?",
-    "who are you": "I am your virtual assistant for AIMS (AMIT INSTITUTE OF MATH'S AND SCIENCE), created using modern web technologies.",
+    "who are you": "I am AskAIMS, your virtual assistant for AIMS (AMIT INSTITUTE OF MATH'S AND SCIENCE), created using modern web technologies.",
     "subjects": "Please tell me your interests or career goals, and I can suggest suitable subjects or courses.",
     "courses": "Please tell me your interests or career goals, and I can suggest suitable subjects or courses.",
     "college": "Are you looking for specific colleges or general advice on how to choose one?",
     "university": "Are you looking for specific colleges or general advice on how to choose one?",
-    "contact": "You can reach out to our academic advisor at advisor@aims.edu or call us at (123) 456-7890.",
+    "class timings": () => showTodaySchedule(),
+    "contact": () => displayMessage(contactInfo),
+    "contact us": () => displayMessage(contactInfo),
+    "today's schedule": () => showTodaySchedule(),
     "open youtube": () => {
         displayMessage("Opening YouTube...");
-        window.open("https://youtube.com/@gyanofficialchannel3418?si=MI4OSUmyfwKj79IR", "_blank");
+        window.open("https://youtube.com/@gyanofficialchannel3418", "_blank");
     },
     "open google": () => {
         displayMessage("Opening Google...");
@@ -29,76 +52,20 @@ const responses: { [key: string]: string | (() => void) } = {
     }
 };
 
+// Function to show today's class schedule
+function showTodaySchedule(): void {
+    const today = new Date().toLocaleDateString("en-US", { weekday: "long" }).toLowerCase();
+    const schedule = classSchedule[today] || "No class schedule available.";
+    displayMessage(`📅 Today is ${today.charAt(0).toUpperCase() + today.slice(1)}.\n${schedule}`);
+}
+
 // Display message in chat
 function displayMessage(text: string, isUser: boolean = false): void {
     const messageDiv = document.createElement("div");
     messageDiv.classList.add("message", isUser ? "user-message" : "assistant-message");
     messageDiv.innerText = text;
     content.appendChild(messageDiv);
-
-    setTimeout(() => {
-        content.scrollTop = content.scrollHeight;
-    }, 0);
-}
-
-// Show typing indicator
-function showTypingIndicator(): HTMLDivElement {
-    const typingDiv = document.createElement("div");
-    typingDiv.classList.add("typing-indicator");
-    typingDiv.innerText = "Assistant is typing...";
-    content.appendChild(typingDiv);
     content.scrollTop = content.scrollHeight;
-    return typingDiv;
-}
-
-// Auto Dark Mode Detection
-function applyTheme(): void {
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    
-    if (prefersDark) {
-        document.body.classList.add("dark-mode");
-    } else {
-        document.body.classList.remove("dark-mode");
-    }
-}
-
-// Listen for theme changes and apply theme on page load
-window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", applyTheme);
-document.addEventListener("DOMContentLoaded", () => {
-    applyTheme();
-    wishMe();
-});
-
-// Initial greeting
-function wishMe(): void {
-    const hours = new Date().getHours();
-    const greeting = 
-        hours < 12 ? "Good Morning Students" :
-        hours < 18 ? "Good Afternoon Students" :
-        hours < 21 ? "Good Evening Students" : "Good Night Students";
-
-    displayMessage(greeting);
-}
-
-// Process user command
-function takeCommand(message: string): void {
-    message = message.toLowerCase().trim();
-
-    const typing = showTypingIndicator();
-
-    setTimeout(() => {
-        content.removeChild(typing);
-
-        if (responses[message]) {
-            if (typeof responses[message] === "function") {
-                (responses[message] as () => void)();
-            } else {
-                displayMessage(responses[message] as string);
-            }
-        } else {
-            displayMessage("I'm not sure how to respond to that. Try asking about subjects, courses, or contacting us!");
-        }
-    }, 1000);
 }
 
 // Handle user input
@@ -107,7 +74,17 @@ function handleUserInput(): void {
     if (!userMessage) return;
 
     displayMessage(userMessage, true);
-    takeCommand(userMessage);
+
+    setTimeout(() => {
+        if (responses[userMessage.toLowerCase()]) {
+            typeof responses[userMessage.toLowerCase()] === "function"
+                ? (responses[userMessage.toLowerCase()] as () => void)()
+                : displayMessage(responses[userMessage.toLowerCase()] as string);
+        } else {
+            displayMessage("I'm not sure how to respond to that. Try asking about subjects, courses, or contacting us!");
+        }
+    }, 1000);
+
     setTimeout(() => { messageInput.value = ""; }, 100);
 }
 
@@ -119,9 +96,9 @@ messageInput.addEventListener("keypress", (e) => {
     }
 });
 
-// Generate suggestion buttons
+// Generate predefined suggestion buttons
 function generateSuggestions(): void {
-    const suggestions = ["hello", "who are you", "subjects", "courses", "college", "contact", "time", "date"];
+    const suggestions = ["hello", "who are you", "class timings", "contact us", "time", "date"];
     suggestions.forEach(text => {
         const button = document.createElement("button");
         button.classList.add("suggestion-btn");
